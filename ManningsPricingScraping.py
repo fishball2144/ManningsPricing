@@ -12,24 +12,34 @@ url = "https://www.mannings.com.hk/personalcarenhair/personal-care/sanitary-prot
 
 r = driver.get(url)
 
-try:
+# driver.maximize_window()
+
+try:  # popup message handler
     close_popup = WebDriverWait(driver, 1).until(
         EC.element_to_be_clickable((By.ID, "pdv4close"))).click()
 except:
     print("no popup message!")
 
-driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
+# next_page = driver.find_element_by_xpath("//li[@class='pagination-next']/a").click()  # go to next page
+
 products = driver.find_elements_by_css_selector(
     "h2.prod_description")
 product_prices = driver.find_elements_by_css_selector("p.price")
 product_offers = driver.find_elements_by_xpath(
     "//div[@class='offer_section']/span[@class='hidden-xs']")
 
+product_offer_list = []
+product_price_list = []
+product_list = []
+
 for product in products:
-    print(product.text)
+    product_list.append(product.text)
 
 for product_price in product_prices:
-    print(product_price.text)
+    product_price_list.append(product_price.text)
 
 for product_offer in product_offers:
-    print(product_offer.text)
+    product_offer_list.append(product_offer.text)
+
+pricing = list(zip(product_list, product_price_list, product_offer_list))
+print(pricing)
