@@ -1,5 +1,4 @@
 from selenium import webdriver
-import time
 from selenium.webdriver.chrome.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support import expected_conditions as EC
@@ -20,26 +19,28 @@ try:  # popup message handler
 except:
     print("no popup message!")
 
-# next_page = driver.find_element_by_xpath("//li[@class='pagination-next']/a").click()  # go to next page
-
-products = driver.find_elements_by_css_selector(
-    "h2.prod_description")
-product_prices = driver.find_elements_by_css_selector("p.price")
-product_offers = driver.find_elements_by_xpath(
-    "//div[@class='offer_section']/span[@class='hidden-xs']")
-
 product_offer_list = []
 product_price_list = []
 product_list = []
-
-for product in products:
-    product_list.append(product.text)
-
-for product_price in product_prices:
-    product_price_list.append(product_price.text)
-
-for product_offer in product_offers:
-    product_offer_list.append(product_offer.text)
+condition = True
+while condition:
+    productInfoList = driver.find_elements_by_class_name("product_content")
+    for el in productInfoList:
+        products = driver.find_elements_by_css_selector("h2.prod_description")
+        product_prices = driver.find_elements_by_css_selector("p.price")
+        product_offers = driver.find_elements_by_xpath(
+            "//div[@class='offer_section']/span[@class='hidden-xs']")
+    for product in products:
+        product_list.append(product.text)
+    for product_price in product_prices:
+        product_price_list.append(product_price.text)
+    for product_offer in product_offers:
+        product_offer_list.append(product_offer.text)
+    try:
+        driver.find_element_by_xpath(
+            "//li[@class='pagination-next']/a").click()  # go to next page
+    except:
+        condition = False
 
 pricing = list(zip(product_list, product_price_list, product_offer_list))
 print(pricing)
