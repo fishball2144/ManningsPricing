@@ -5,16 +5,15 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 import pandas as pd
+from datetime import date
 
 driver = webdriver.Chrome(ChromeDriverManager().install())
 
-#url = "https://www.mannings.com.hk/personalcarenhair/personal-care/sanitary-protection/c/fesanitaryprotection"
+# url = "https://www.mannings.com.hk/personalcarenhair/personal-care/sanitary-protection/c/fesanitaryprotection" #example url
 
 url = input("what do you want to check?Please start from the first page!")
 
 r = driver.get(url)
-
-# driver.maximize_window()
 
 try:  # popup message handler
     close_popup = WebDriverWait(driver, 5).until(
@@ -45,9 +44,8 @@ while condition:
             "//li[@class='pagination-next']/a").click()  # go to next page
     except:
         condition = False
-print(product_id_list)
 
-pricing = list(zip(product_list, product_price_list, product_offer_list))
-print(pricing)
-data = pd.DataFrame(pricing)
+data = pd.DataFrame({"record date": date.today(), "product name": product_list,
+                    "price": product_price_list, "offer": product_offer_list})
 data.to_excel("pricing_data.xlsx", index=False)
+driver.quit()
