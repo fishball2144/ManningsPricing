@@ -10,5 +10,6 @@ you have to install:
 Selenium
 chrome driver: https://chromedriver.chromium.org/downloads
 selenium 
-webdriver_manager
+webdriver-manager
 panadas
+openpyxl
