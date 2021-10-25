@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 import pandas as pd
 from datetime import date
+from datetime import datetime
 import time
 
 # access url by using webdriver
@@ -59,7 +60,7 @@ def get_product_data(key):
         'product Name': productName,
         'Brand': productBrand,
         'Price': productPrice,
-        'Product ID': productId,
+        'MAN Product ID': productId,
         'Product Offer': productOffer_list[::2],
         'Record Time': date.today()
     }
@@ -74,8 +75,9 @@ print(targetProductdetail)
 
 # use pandas to create dataframe and export to excel or csv
 df = pd.DataFrame(targetProductdetail)
+datestring = datetime.strftime(date.today(), ' %d%m%Y')
 # df.to_csv('product_detail.csv')
-df.to_excel('product_detail.xlsx')
+df.to_excel('Mannings product_detail'+datestring+'.xlsx')
 print('saved to file')
 
 # close the webdriver after finish all
