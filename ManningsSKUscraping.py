@@ -16,7 +16,7 @@ url = "https://www.mannings.com.hk/"  # example url
 r = driver.get(url)
 
 # import your interested SKU in Mannings Code
-target_product_list = [572123, 433243]
+target_product_list = [343327, 724328]
 
 # an list to record product details
 targetProductdetail = []
@@ -34,6 +34,15 @@ def remove_popup():
 # Main function to record the product details
 
 
+def garfield():
+    try:
+        garfieldPromotion = driver.find_element_by_class_name(
+            'garfield_mannings_pdp')
+    except:
+        return 'False'
+    return 'True'
+
+
 def get_product_data(key):
     # acess the Mannings website and input the Mannings product id
     remove_popup()
@@ -48,19 +57,26 @@ def get_product_data(key):
     productPrice = driver.find_element_by_class_name('price').text
     productId = driver.find_element_by_class_name('sku_code_new').text
     productOffer = driver.find_elements_by_class_name("pdp_offer_section")
-
+    isGarfield = garfield()
     # record the offer if more than one
     productOffer_list = []
 
     for offer in productOffer:
         productOffer_list.append(offer.text)
 
+    if any(str.format("20%off") in od for od in productOffer_list):
+        promotionProductPrice = float(productPrice.replace('$', ''))*0.8
+    else:
+        promotionProductPrice = productPrice
+
     # Convert to dictionary
     ItemDetails = {
         'product Name': productName,
         'Brand': productBrand,
-        'Price': productPrice,
+        'Price': productPrice.replace('$', ''),
+        'Promotion Price': promotionProductPrice,
         'MAN Product ID': productId,
+        'Garfield Promotion': isGarfield,
         'Product Offer': productOffer_list[::2],
         'Record Time': date.today()
     }
