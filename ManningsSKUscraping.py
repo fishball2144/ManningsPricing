@@ -66,8 +66,16 @@ def get_product_data(key):
 
     if any(str.format("20%off") in od for od in productOffer_list):
         promotionProductPrice = float(productPrice.replace('$', ''))*0.8
+    elif any(str.format("10%off") in od for od in productOffer_list):
+        promotionProductPrice = float(productPrice.replace('$', ''))*0.9
+    elif any(str.format("30%off") in od for od in productOffer_list):
+        promotionProductPrice = float(productPrice.replace('$', ''))*0.7
+    elif any(str.format("2nd pc 50% off") in od for od in productOffer_list):
+        promotionProductPrice = float(productPrice.replace('$', ''))*0.75
+    elif any(str.format("Buy 1 Get 1 Free") in od for od in productOffer_list):
+        promotionProductPrice = float(productPrice.replace('$', ''))*0.5
     else:
-        promotionProductPrice = productPrice
+        promotionProductPrice = productPrice.replace('$', '')
 
     # Convert to dictionary
     ItemDetails = {
