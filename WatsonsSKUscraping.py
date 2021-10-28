@@ -17,8 +17,6 @@ target_url_list = [
 # access url by using webdriver
 driver = webdriver.Chrome(ChromeDriverManager().install())
 
-
-product_offer_list = []
 targetProductdetail = []
 
 # pop up message handler
@@ -33,6 +31,7 @@ def remove_popup():
 
 
 def get_product_data(target_url):
+    product_offer_list = []
     r = driver.get(target_url)
     remove_popup()
     time.sleep(0.2)
@@ -58,7 +57,7 @@ def get_product_data(target_url):
     ItemDetails = {
         'product Name': productName,
         'Brand': productBrand,
-        'Price': productPrice,
+        'Price': productPrice.replace('$', ''),
         'WAT Product ID': productId,
         'Product Offer': product_offer_list,
         'Record Time': date.today()

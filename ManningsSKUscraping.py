@@ -8,6 +8,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 import pandas as pd
 from datetime import date
 from datetime import datetime
+import pathlib
 import time
 
 # access url by using webdriver
@@ -16,7 +17,9 @@ url = "https://www.mannings.com.hk/"  # example url
 r = driver.get(url)
 
 # import your interested SKU in Mannings Code
-target_product_list = [343327, 724328]
+# can also index sheet by name or fetch all sheets
+df = pd.read_excel('target.xlsx', sheet_name='MAN product')
+target_list = df['MAN ID'].tolist()
 
 # an list to record product details
 targetProductdetail = []
@@ -92,16 +95,17 @@ def get_product_data(key):
 
 
 # loop the target product list and send to record function
-for item in target_product_list:
+for item in target_list:
     get_product_data(item)
 
 print(targetProductdetail)
 
 # use pandas to create dataframe and export to excel or csv
+pathlib.Path('/record').mkdir(parents=True, exist_ok=True)
 df = pd.DataFrame(targetProductdetail)
 datestring = datetime.strftime(date.today(), ' %d%m%Y')
 # df.to_csv('product_detail.csv')
-df.to_excel('Mannings product_detail'+datestring+'.xlsx')
+df.to_excel('record/Mannings product_detail'+datestring+'.xlsx')
 print('saved to file')
 
 # close the webdriver after finish all
