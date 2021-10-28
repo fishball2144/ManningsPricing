@@ -1,4 +1,4 @@
-##import Library
+# import Library
 from selenium import webdriver
 from selenium.webdriver.chrome.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 import pandas as pd
+import os
 from datetime import date
 from datetime import datetime
 import pathlib
@@ -88,7 +89,7 @@ def get_product_data(key):
         'Promotion Price': promotionProductPrice,
         'MAN Product ID': productId,
         'Garfield Promotion': isGarfield,
-        'Product Offer': productOffer_list[::2],
+        'Product Offer': '\n'.join(productOffer_list[::2]),
         'Record Time': date.today()
     }
     targetProductdetail.append(ItemDetails)
@@ -99,13 +100,15 @@ for item in target_list:
     get_product_data(item)
 
 print(targetProductdetail)
-
+script_path = os.path.dirname(os.path.abspath(__file__))
 # use pandas to create dataframe and export to excel or csv
-pathlib.Path('/record').mkdir(parents=True, exist_ok=True)
+pathlib.Path(script_path+'\\record').mkdir(parents=True, exist_ok=True)
 df = pd.DataFrame(targetProductdetail)
 datestring = datetime.strftime(date.today(), ' %d%m%Y')
 # df.to_csv('product_detail.csv')
-df.to_excel('record/Mannings product_detail'+datestring+'.xlsx')
+print(script_path+'/record/Mannings product_detail')
+df.to_excel(script_path+'\\record\\Mannings product_detail'+datestring+'.xlsx')
+
 print('saved to file')
 
 # close the webdriver after finish all

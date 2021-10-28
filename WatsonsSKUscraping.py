@@ -6,17 +6,19 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 import pandas as pd
+import os
+import pathlib
 from datetime import date
 from datetime import datetime
 import time
 
 # target url
-target_url_list = [
-    'https://www.watsons.com.hk/%E8%AD%B7%E8%88%92%E5%AF%B6radiant%E6%97%A5%E7%94%A824cm-9%E7%89%87/p/BP_287456', 'https://www.watsons.com.hk/%E6%BB%8B%E6%BD%A4%E8%82%B2%E9%AB%AE%E7%B2%BE%E8%8F%AF%E7%B4%A0/p/BP_266919']
 
+df = pd.read_excel('target.xlsx', sheet_name='WAT url')
+target_list = df['WAT url'].tolist()
 # access url by using webdriver
 driver = webdriver.Chrome(ChromeDriverManager().install())
-
+driver.maximize_window()
 targetProductdetail = []
 
 # pop up message handler
@@ -37,44 +39,45 @@ def get_product_data(target_url):
     time.sleep(0.2)
     # web element locator
     productName = driver.find_element_by_xpath(
-        '/html/body/app-root/cx-storefront/main/cx-page-layout/cx-page-slot[2]/e2-product-summary/h1').text
+        '/html/body/app-root/cx-storefront/main/cx-page-layout/cx-page-slot[3]/e2-product-summary/h1').text
     productBrand = driver.find_element_by_xpath(
-        '/html/body/app-root/cx-storefront/main/cx-page-layout/cx-page-slot[2]/e2-product-summary/h2/a').text
+        '/html/body/app-root/cx-storefront/main/cx-page-layout/cx-page-slot[3]/e2-product-summary/h2/a').text
     productPrice = driver.find_element_by_class_name('displayPrice').text
-    productOffer = driver.find_elements_by_class_name('tab')
+    productOffer = driver.find_element_by_xpath(
+        '/html/body/app-root/cx-storefront/main/cx-page-layout/cx-page-slot[6]/e2-product-promotions-details/div/div[2]/div').text
     productId = driver.find_element_by_xpath(
-        '/html/body/app-root/cx-storefront/main/cx-page-layout/cx-page-slot[13]/e2-product-code/p/span').text
+        '/html/body/app-root/cx-storefront/main/cx-page-layout/cx-page-slot[10]/e2-product-code/p/span').text
 
-    for offer in productOffer:
-        product_offer_list.append(offer.text)
-
-    print(productName)
-    print(productBrand)
-    print(productPrice)
-    print(productId)
-    print(product_offer_list)
+    if any(str.format("第2件半價") in od for od in productOffer.splitlines()):
+        promotionProductPrice = float(
+            productPrice.replace('$', ''))*0.5
+    else:
+        promotionProductPrice = productPrice.replace('$', '')
 
     ItemDetails = {
         'product Name': productName,
         'Brand': productBrand,
         'Price': productPrice.replace('$', ''),
+        'Promotion Price': promotionProductPrice,
         'WAT Product ID': productId,
-        'Product Offer': product_offer_list,
+        'Product Offer': productOffer,
         'Record Time': date.today()
     }
     targetProductdetail.append(ItemDetails)
 
 
-for url in target_url_list:
+for url in target_list:
     get_product_data(url)
 
 print(targetProductdetail)
 
 # use pandas to create dataframe and export to excel or csv
+script_path = os.path.dirname(os.path.abspath(__file__))
+pathlib.Path(script_path+'\\record').mkdir(parents=True, exist_ok=True)
 df = pd.DataFrame(targetProductdetail)
 datestring = datetime.strftime(date.today(), ' %d%m%Y')
 # df.to_csv('product_detail.csv')
-df.to_excel('Watsons product_detail'+datestring+'.xlsx')
+df.to_excel(script_path+'\\record\\Watsons product_detail'+datestring+'.xlsx')
 print('saved to file')
 
 # close the webdriver after finish all
