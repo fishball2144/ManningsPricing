@@ -14,7 +14,7 @@ import time
 
 # target url
 
-df = pd.read_excel('target.xlsx', sheet_name='WAT url')
+df = pd.read_excel('target2.xlsx', sheet_name='WAT url')
 target_list = df['WAT url'].tolist()
 # access url by using webdriver
 driver = webdriver.Chrome(ChromeDriverManager().install())
@@ -51,6 +51,21 @@ def get_product_data(target_url):
     if any(str.format("第2件半價") in od for od in productOffer.splitlines()):
         promotionProductPrice = float(
             productPrice.replace('$', ''))*0.5
+    elif any(str.format("照價9折") in od for od in productOffer.splitlines()):
+        promotionProductPrice = float(
+            productPrice.replace('$', ''))*0.9
+    elif any(str.format("照價85折") in od for od in productOffer.splitlines()):
+        promotionProductPrice = float(
+            productPrice.replace('$', ''))*0.85
+    elif any(str.format("30% off") in od for od in productOffer.splitlines()):
+        promotionProductPrice = float(
+            productPrice.replace('$', ''))*0.7
+    elif any(str.format("買3送1") in od for od in productOffer.splitlines()):
+        promotionProductPrice = float(
+            productPrice.replace('$', ''))*0.75
+    elif any(str.format("買1送1") in od for od in productOffer.splitlines()):
+        promotionProductPrice = float(
+            productPrice.replace('$', ''))*0.5
     else:
         promotionProductPrice = productPrice.replace('$', '')
 
@@ -77,7 +92,7 @@ pathlib.Path(script_path+'\\record').mkdir(parents=True, exist_ok=True)
 df = pd.DataFrame(targetProductdetail)
 datestring = datetime.strftime(date.today(), ' %d%m%Y')
 # df.to_csv('product_detail.csv')
-df.to_excel(script_path+'\\record\\Watsons product_detail'+datestring+'.xlsx')
+df.to_excel(script_path+'\\record\\11_Watsons product_detail'+datestring+'.xlsx')
 print('saved to file')
 
 # close the webdriver after finish all

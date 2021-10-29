@@ -19,7 +19,7 @@ r = driver.get(url)
 
 # import your interested SKU in Mannings Code
 # can also index sheet by name or fetch all sheets
-df = pd.read_excel('target.xlsx', sheet_name='MAN product',converters={'MAN ID':str})
+df = pd.read_excel(r'C:\Users\25001633\Documents\daily record\ManningsPricing\target2.xlsx', sheet_name='MAN product',converters={'MAN ID':str})
 target_list = df['MAN ID'].tolist()
 
 # an list to record product details
@@ -76,9 +76,9 @@ def get_product_data(key):
         promotionProductPrice = float(productPrice.replace('$', ''))*0.85
     elif any(str.format("30%off") in od for od in productOffer_list):
         promotionProductPrice = float(productPrice.replace('$', ''))*0.7
-    elif any(str.format("2nd pc 50% off") in od for od in productOffer_list):
+    elif any(str.format("2nd pc 50% off") or ("50% for 2nd") in od for od in productOffer_list):
         promotionProductPrice = float(productPrice.replace('$', ''))*0.75
-    elif any(str.format("Buy 1 Get 1 Free") in od for od in productOffer_list):
+    elif any(str.format("Buy 1 Get 1 Free") or str.format("Buy 1 get 1 free") in od for od in productOffer_list):
         promotionProductPrice = float(productPrice.replace('$', ''))*0.5
     else:
         promotionProductPrice = productPrice.replace('$', '')
@@ -109,7 +109,7 @@ df = pd.DataFrame(targetProductdetail)
 datestring = datetime.strftime(date.today(), ' %d%m%Y')
 # df.to_csv('product_detail.csv')
 print(script_path+'/record/Mannings product_detail')
-df.to_excel(script_path+'\\record\\Mannings product_detail'+datestring+'.xlsx')
+df.to_excel(script_path+'\\record\\11_Mannings product_detail'+datestring+'.xlsx')
 
 print('saved to file')
 
