@@ -19,7 +19,7 @@ r = driver.get(url)
 
 # import your interested SKU in Mannings Code
 # can also index sheet by name or fetch all sheets
-df = pd.read_excel('target.xlsx', sheet_name='MAN product')
+df = pd.read_excel('target.xlsx', sheet_name='MAN product',converters={'MAN ID':str})
 target_list = df['MAN ID'].tolist()
 
 # an list to record product details
@@ -53,7 +53,7 @@ def get_product_data(key):
     inputElement = driver.find_element_by_id('js-site-search-input')
     inputElement.send_keys(key)
     inputElement.submit()
-    time.sleep(0.2)
+    # time.sleep(0.2)
     # web element locator
     productName = driver.find_element_by_class_name('product_name_pdp').text
     productBrand = driver.find_elements_by_class_name(
@@ -72,6 +72,8 @@ def get_product_data(key):
         promotionProductPrice = float(productPrice.replace('$', ''))*0.8
     elif any(str.format("10%off") in od for od in productOffer_list):
         promotionProductPrice = float(productPrice.replace('$', ''))*0.9
+    elif any(str.format("15%off") in od for od in productOffer_list):
+        promotionProductPrice = float(productPrice.replace('$', ''))*0.85
     elif any(str.format("30%off") in od for od in productOffer_list):
         promotionProductPrice = float(productPrice.replace('$', ''))*0.7
     elif any(str.format("2nd pc 50% off") in od for od in productOffer_list):
