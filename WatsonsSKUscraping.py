@@ -5,6 +5,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.chrome.options import Options
 import pandas as pd
 import os
 import pathlib
@@ -12,9 +13,11 @@ from datetime import date
 from datetime import datetime
 import time
 
-# target url
 
-df = pd.read_excel('target2.xlsx', sheet_name='WAT url')
+# chrome_options = Options()
+# chrome_options.add_argument('headless')
+# target url
+df = pd.read_excel(r'<Target file path>', sheet_name='WAT url')
 target_list = df['WAT url'].tolist()
 # access url by using webdriver
 driver = webdriver.Chrome(ChromeDriverManager().install())
@@ -43,18 +46,22 @@ def get_product_data(target_url):
     productBrand = driver.find_element_by_xpath(
         '/html/body/app-root/cx-storefront/main/cx-page-layout/cx-page-slot[3]/e2-product-summary/h2/a').text
     productPrice = driver.find_element_by_class_name('displayPrice').text
-    productOffer = driver.find_element_by_xpath(
+    try: 
+        productOffer = driver.find_element_by_xpath(
         '/html/body/app-root/cx-storefront/main/cx-page-layout/cx-page-slot[6]/e2-product-promotions-details/div/div[2]/div').text
+    except:
+        productOffer = ''
     productId = driver.find_element_by_xpath(
         '/html/body/app-root/cx-storefront/main/cx-page-layout/cx-page-slot[10]/e2-product-code/p/span').text
+    driver.save_screenshot(r'<Target file path>'+'WAT '+productName+datetime.strftime(date.today(), ' %d%m%Y')+".png")
 
     if any(str.format("第2件半價") in od for od in productOffer.splitlines()):
         promotionProductPrice = float(
-            productPrice.replace('$', ''))*0.5
-    elif any(str.format("照價9折") in od for od in productOffer.splitlines()):
+            productPrice.replace('$', ''))*0.75
+    elif any(str.format("9折") in od for od in productOffer.splitlines()):
         promotionProductPrice = float(
             productPrice.replace('$', ''))*0.9
-    elif any(str.format("照價85折") in od for od in productOffer.splitlines()):
+    elif any(str.format("85折") in od for od in productOffer.splitlines()):
         promotionProductPrice = float(
             productPrice.replace('$', ''))*0.85
     elif any(str.format("30% off") in od for od in productOffer.splitlines()):
@@ -92,7 +99,7 @@ pathlib.Path(script_path+'\\record').mkdir(parents=True, exist_ok=True)
 df = pd.DataFrame(targetProductdetail)
 datestring = datetime.strftime(date.today(), ' %d%m%Y')
 # df.to_csv('product_detail.csv')
-df.to_excel(script_path+'\\record\\11_Watsons product_detail'+datestring+'.xlsx')
+df.to_excel(script_path+'\\record\\Watsons product_detail'+datestring+'.xlsx')
 print('saved to file')
 
 # close the webdriver after finish all

@@ -6,11 +6,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 import pandas as pd
 from datetime import date
+from Screenshot import Screenshot_Clipping
 
 driver = webdriver.Chrome(ChromeDriverManager().install())
 
 # url = "https://www.mannings.com.hk/personalcarenhair/personal-care/sanitary-protection/c/fesanitaryprotection" #example url
-
+df = pd.read_excel(r'C:\Users\25001633\Documents\daily record\ManningsPricing\target.xlsx', sheet_name='MAN product',converters={'MAN ID':str})
+target_list = df['MAN ID'].tolist()
 url = input("what do you want to check?Please start from the first page!")
 
 r = driver.get(url)
@@ -27,12 +29,15 @@ product_list = []
 product_id_list = []
 condition = True
 while condition:
+    i=0
     productInfoList = driver.find_elements_by_class_name("product_content")
     for el in productInfoList:
         products = driver.find_elements_by_css_selector("h2.prod_description")
         product_prices = driver.find_elements_by_css_selector("p.price")
         product_offers = driver.find_elements_by_xpath(
             "//div[@class='offer_section']/span[@class='hidden-xs']")
+        ob=Screenshot_Clipping.Screenshot()
+        img=ob.full_Screenshot(driver,save_path=r'C:\Users\25001633\Documents\daily record\ManningsPricing\record\photo',image_name=i+".png")
     for product in products:
         product_list.append(product.text)
     for pp in product_prices:
@@ -42,6 +47,7 @@ while condition:
     try:
         driver.find_element_by_xpath(
             "//li[@class='pagination-next']/a").click()  # go to next page
+        i=i+1
     except:
         condition = False
 
